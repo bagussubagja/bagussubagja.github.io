@@ -1,9 +1,21 @@
-import { MapPin, Calendar, Clock, CheckCircle2 } from "lucide-react";
-import { motion } from "framer-motion";
+import { useState } from "react";
+import { MapPin, Calendar, Clock, CheckCircle2, ChevronDown, ChevronUp } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { AnimatedSection, AnimatedList, AnimatedItem, staggerContainer, staggerItem } from "./animations/MotionWrapper";
 import { experiences, calculateDuration } from "@/data/experiences";
 
+const RESPONSIBILITIES_LIMIT = 3;
+
 const Experience = () => {
+  const [expandedIds, setExpandedIds] = useState<Set<number>>(new Set());
+
+  const toggleExpand = (id: number) => {
+    setExpandedIds((prev) => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+  };
   return (
     <section id="experience" className="py-24 px-4">
       <div className="container max-w-6xl mx-auto">
@@ -56,14 +68,32 @@ const Experience = () => {
                       </span>
                     </div>
 
-                    <ul className="space-y-2 mb-6">
-                      {exp.responsibilities.map((resp, i) => (
+                    <ul className="space-y-2 mb-2">
+                      {(expandedIds.has(exp.id)
+                        ? exp.responsibilities
+                        : exp.responsibilities.slice(0, RESPONSIBILITIES_LIMIT)
+                      ).map((resp, i) => (
                         <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
                           <span className="text-primary mt-1">-</span>
                           {resp}
                         </li>
                       ))}
                     </ul>
+                    {exp.responsibilities.length > RESPONSIBILITIES_LIMIT && (
+                      <button
+                        onClick={() => toggleExpand(exp.id)}
+                        className="flex items-center gap-1 text-xs text-primary hover:underline mb-6 cursor-pointer"
+                      >
+                        {expandedIds.has(exp.id) ? (
+                          <>Show less <ChevronUp className="w-3 h-3" /></>
+                        ) : (
+                          <>Read more ({exp.responsibilities.length - RESPONSIBILITIES_LIMIT} more) <ChevronDown className="w-3 h-3" /></>
+                        )}
+                      </button>
+                    )}
+                    {(exp.responsibilities.length <= RESPONSIBILITIES_LIMIT || !expandedIds.has(exp.id)) && (
+                      <div className="mb-4" />
+                    )}
 
                     {exp.products && (
                       <div className="mb-6">
