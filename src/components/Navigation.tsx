@@ -12,6 +12,8 @@ const navItems = [
   { id: "testimonials", icon: MessageSquare, label: "Reviews" },
 ];
 
+const mobileNavItems = navItems.filter((item) => item.id !== "products");
+
 const Navigation = () => {
   const [activeSection, setActiveSection] = useState("profile");
   const [isScrolled, setIsScrolled] = useState(false);
@@ -99,7 +101,7 @@ const Navigation = () => {
       {/* Mobile Navigation - Bottom */}
       <nav className="glass-bottom-nav md:hidden">
         <div className="flex items-center justify-around w-full">
-          {navItems.map((item) => (
+          {mobileNavItems.map((item) => (
             <button
               key={item.id}
               onClick={() => scrollToSection(item.id)}
