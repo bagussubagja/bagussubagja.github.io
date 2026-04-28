@@ -37,7 +37,7 @@ export interface Project {
 }
 
 export const projects: Project[] = [
-  // PT. Sarana Pactindo
+  // Fortress Digital Service
   {
     id: "pdsb-mobile-banking",
     title: "PDSB Mobile Banking",
@@ -59,7 +59,7 @@ export const projects: Project[] = [
       { label: "App Store", url: "https://apps.apple.com/id/app/pdsb-mobile-banking/id6447231714" },
       { label: "Google Play", url: "https://play.google.com/store/apps/details?id=com.pactindo.mb.pdsb" },
     ],
-    company: "PT. Sarana Pactindo",
+    company: "Fortress Digital Service",
     duration: "Ongoing",
     role: "Mobile Developer",
     year: "2024",
@@ -85,7 +85,7 @@ export const projects: Project[] = [
       { label: "App Store", url: "https://apps.apple.com/id/app/mobile-banking-bank-sultra/id1543325057" },
       { label: "Google Play", url: "https://play.google.com/store/apps/details?id=id.co.banksultra.mobilebanking" },
     ],
-    company: "PT. Sarana Pactindo",
+    company: "Fortress Digital Service",
     duration: "Ongoing",
     role: "Mobile Developer",
     year: "2024",
@@ -111,7 +111,7 @@ export const projects: Project[] = [
       { label: "App Store", url: "https://apps.apple.com/id/app/meb/id6450219969" },
       { label: "Google Play", url: "https://play.google.com/store/apps/details?id=com.pactindo.revamp.bmi" },
     ],
-    company: "PT. Sarana Pactindo",
+    company: "Fortress Digital Service",
     duration: "Ongoing",
     role: "Mobile Developer",
     year: "2024",
@@ -137,7 +137,7 @@ export const projects: Project[] = [
       { label: "App Store", url: "https://apps.apple.com/id/app/pac-cash/id1516408924" },
       { label: "Google Play", url: "https://play.google.com/store/apps/details?id=com.pactindo.emoney" },
     ],
-    company: "PT. Sarana Pactindo",
+    company: "Fortress Digital Service",
     duration: "Ongoing",
     role: "Mobile Developer",
     year: "2024",
@@ -163,7 +163,7 @@ export const projects: Project[] = [
       { label: "App Store", url: "https://apps.apple.com/id/app/pdsb-mobile-token/id6471043740" },
       { label: "Google Play", url: "https://play.google.com/store/apps/details?id=id.com.pdsb.mobileibb" },
     ],
-    company: "PT. Sarana Pactindo",
+    company: "Fortress Digital Service",
     duration: "Ongoing",
     role: "Mobile Developer",
     year: "2024",
@@ -188,7 +188,7 @@ export const projects: Project[] = [
     links: [
       { label: "Google Play", url: "https://play.google.com/store/apps/details?id=com.dwidasa.sultra.mbqris.android" },
     ],
-    company: "PT. Sarana Pactindo",
+    company: "Fortress Digital Service",
     duration: "Ongoing",
     role: "Mobile Developer",
     year: "2024",
@@ -211,7 +211,7 @@ export const projects: Project[] = [
       "Secure merchant authentication",
     ],
     links: [],
-    company: "PT. Sarana Pactindo",
+    company: "Fortress Digital Service",
     duration: "Ongoing",
     role: "Mobile Developer",
     year: "2024",
