@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { MapPin, Calendar, Clock, CheckCircle2, ChevronDown, ChevronUp } from "lucide-react";
+import { MapPin, Calendar, Clock, ChevronDown, ChevronUp } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { AnimatedSection, AnimatedList, AnimatedItem, staggerContainer, staggerItem } from "./animations/MotionWrapper";
 import { experiences, calculateDuration } from "@/data/experiences";
@@ -36,7 +36,7 @@ const Experience = () => {
                 whileHover={{ scale: 1.01 }}
                 transition={{ type: "spring", stiffness: 400 }}
               >
-                <div className="grid lg:grid-cols-[2fr_1fr] gap-8">
+                <div>
                   <div>
                     <div className="flex flex-wrap items-center gap-4 mb-4">
                       <h3 className="text-xl font-bold text-primary">{exp.title}</h3>
@@ -132,25 +132,6 @@ const Experience = () => {
                         ))}
                       </motion.div>
                     </div>
-                  </div>
-
-                  <div className="lg:border-l lg:border-border/30 lg:pl-8">
-                    <h5 className="text-sm font-semibold text-primary mb-4">Key Achievements</h5>
-                    <ul className="space-y-3">
-                      {exp.achievements.map((achievement, i) => (
-                        <motion.li
-                          key={i}
-                          className="flex items-start gap-2 text-sm text-muted-foreground"
-                          initial={{ opacity: 0, x: 20 }}
-                          whileInView={{ opacity: 1, x: 0 }}
-                          viewport={{ once: true }}
-                          transition={{ delay: i * 0.1 }}
-                        >
-                          <CheckCircle2 className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
-                          {achievement}
-                        </motion.li>
-                      ))}
-                    </ul>
                   </div>
                 </div>
               </motion.article>

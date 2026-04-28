@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Download } from "lucide-react";
-import resumePdf from "@/assets/Resume-BagusSubagja.pdf";
+import resumePdf from "@/assets/CV ATS - Bagus Subagja.pdf";
 
 interface ResumePreviewProps {
   open: boolean;
@@ -29,7 +29,7 @@ const ResumePreview = ({ open, onClose }: ResumePreviewProps) => (
             <div className="flex gap-2">
               <a
                 href={resumePdf}
-                download="Resume-BagusSubagja.pdf"
+                download="CV ATS - Bagus Subagja.pdf"
                 className="glass-button flex items-center gap-2 text-sm py-2 px-4"
               >
                 <Download className="w-4 h-4" /> Download
