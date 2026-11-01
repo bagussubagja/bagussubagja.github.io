@@ -6,11 +6,12 @@ export const personalInfo = {
   greeting: "Hi, I'm Bagus!",
   pronouns: "(He/Him)",
   description:
-    "Mobile Engineer focused on building secure, high-performance apps. I care about maintainability, observability, and smooth user journeys for stable products you can trust.",
+    "Mobile Engineer with 3+ years building Flutter, Android & iOS apps across fintech, agriculture, edutech - delivering production features for 30K+ users.",
   email: "bagussubagja17@gmail.com",
-  location: "Indonesia",
+  phone: "+6285294811232",
+  location: "Bandung, Indonesia",
   resumeUrl: "#",
-  contactUrl: "mailto:bagussubagja17@gmail.com",
+  contactUrl: "https://mail.google.com/mail/?view=cm&to=bagussubagja17@gmail.com",
 };
 
 export const roles = [
@@ -36,7 +37,7 @@ export const seoConfig = {
   about: {
     title: "About Me | Bagus Subagja",
     description:
-      "Get to know Bagus Subagja — a Mobile Engineer passionate about building secure, high-performance applications.",
+      "Get to know Bagus Subagja - a Mobile Engineer passionate about building secure, high-performance applications.",
   },
   projects: {
     title: "Projects - Bagus | Mobile Engineer Portfolio",

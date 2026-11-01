@@ -4,6 +4,7 @@ import { Helmet } from "react-helmet-async";
 import { ArrowLeft, ArrowRight, Filter } from "lucide-react";
 import { motion } from "framer-motion";
 import { projects, getProjectCategories } from "@/data/projects";
+import { useLanguage } from "@/context/LanguageContext";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { AnimatedSection, AnimatedList, AnimatedItem } from "@/components/animations/MotionWrapper";
@@ -11,6 +12,7 @@ import { AnimatedSection, AnimatedList, AnimatedItem } from "@/components/animat
 const AllProjects = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const categories = getProjectCategories();
+  const { language } = useLanguage();
 
   const filteredProjects = selectedCategory
     ? projects.filter((p) => p.category === selectedCategory)
@@ -19,8 +21,11 @@ const AllProjects = () => {
   return (
     <>
       <Helmet>
-        <title>All Projects | Bagus Portfolio</title>
-        <meta name="description" content="Explore all projects by Bagus - Mobile applications, web apps, IoT solutions, and more." />
+        <title>{language === "ID" ? "Semua Proyek" : "All Projects"} | Bagus Portfolio</title>
+        <meta name="description" content={language === "ID" 
+          ? "Jelajahi semua proyek oleh Bagus - Aplikasi mobile, web app, solusi IoT, dan lainnya."
+          : "Explore all projects by Bagus - Mobile applications, web apps, IoT solutions, and more."
+        } />
       </Helmet>
 
       <div className="min-h-screen animated-gradient">
@@ -32,15 +37,20 @@ const AllProjects = () => {
             <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.4 }}>
               <Link to="/" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors mb-8">
                 <ArrowLeft className="w-4 h-4" />
-                Back to Home
+                {language === "ID" ? "Kembali ke Beranda" : "Back to Home"}
               </Link>
             </motion.div>
 
             {/* Header */}
             <AnimatedSection className="text-center mb-12">
-              <h1 className="text-4xl md:text-5xl font-bold mb-4">All Projects</h1>
+              <h1 className="text-4xl md:text-5xl font-bold mb-4">
+                {language === "ID" ? "Semua Proyek" : "All Projects"}
+              </h1>
               <p className="text-muted-foreground max-w-2xl mx-auto">
-                Explore a curated showcase of projects I've built — from ideas to real-world solutions.
+                {language === "ID" 
+                  ? "Jelajahi showcase proyek yang telah saya bangun - dari ide hingga solusi nyata."
+                  : "Explore a curated showcase of projects I've built - from ideas to real-world solutions."
+                }
               </p>
             </AnimatedSection>
 
@@ -62,7 +72,7 @@ const AllProjects = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                All
+                {language === "ID" ? "Semua" : "All"}
               </motion.button>
               {categories.map((category) => (
                 <motion.button
@@ -91,17 +101,23 @@ const AllProjects = () => {
                         <img src={project.image} alt={project.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
                         <div className="absolute inset-0 bg-gradient-to-t from-background/95 via-background/40 to-transparent" />
                         <div className="absolute top-4 left-4">
-                          <span className="glass-nav px-2 py-1 text-xs font-medium">{project.category}</span>
+                          <span className="glass-nav px-2 py-1 text-xs font-medium">
+                            {language === "ID" ? project.categoryId : project.category}
+                          </span>
                         </div>
                         {project.featured && (
                           <div className="absolute top-4 right-4">
-                            <span className="bg-primary/90 px-2 py-1 text-xs font-medium rounded-full text-primary-foreground">Featured</span>
+                            <span className="bg-primary/90 px-2 py-1 text-xs font-medium rounded-full text-primary-foreground">
+                              {language === "ID" ? "Unggulan" : "Featured"}
+                            </span>
                           </div>
                         )}
                       </div>
                       <div className="p-5">
                         <h3 className="text-lg font-bold text-foreground mb-2 group-hover:text-primary transition-colors">{project.title}</h3>
-                        <p className="text-sm text-muted-foreground line-clamp-2 mb-4">{project.shortDescription}</p>
+                        <p className="text-sm text-muted-foreground line-clamp-2 mb-4">
+                          {language === "ID" ? project.shortDescriptionId : project.shortDescription}
+                        </p>
                         <div className="flex flex-wrap gap-1.5 mb-4">
                           {project.technologies.slice(0, 3).map((tech) => (
                             <span key={tech} className="text-xs text-muted-foreground bg-muted/30 px-2 py-0.5 rounded">{tech}</span>
@@ -111,7 +127,7 @@ const AllProjects = () => {
                           )}
                         </div>
                         <div className="flex items-center text-primary text-sm font-medium">
-                          View Details
+                          {language === "ID" ? "Lihat Detail" : "View Details"}
                           <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
                         </div>
                       </div>
@@ -124,8 +140,12 @@ const AllProjects = () => {
             {/* Empty State */}
             {filteredProjects.length === 0 && (
               <motion.div className="text-center py-16 glass-card" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                <p className="text-muted-foreground">No projects found in this category.</p>
-                <button onClick={() => setSelectedCategory(null)} className="glass-button-primary mt-4">Show All Projects</button>
+                <p className="text-muted-foreground">
+                  {language === "ID" ? "Tidak ada proyek ditemukan dalam kategori ini." : "No projects found in this category."}
+                </p>
+                <button onClick={() => setSelectedCategory(null)} className="glass-button-primary mt-4">
+                  {language === "ID" ? "Tampilkan Semua Proyek" : "Show All Projects"}
+                </button>
               </motion.div>
             )}
           </div>

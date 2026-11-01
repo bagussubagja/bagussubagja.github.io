@@ -3,6 +3,7 @@ import { Helmet } from "react-helmet-async";
 import { ArrowLeft, ExternalLink, CheckCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import { getProjectById } from "@/data/projects";
+import { useLanguage } from "@/context/LanguageContext";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { AnimatedSection, AnimatedList, AnimatedItem, fadeUp, scaleUp } from "@/components/animations/MotionWrapper";
@@ -10,26 +11,40 @@ import { AnimatedSection, AnimatedList, AnimatedItem, fadeUp, scaleUp } from "@/
 const ProjectDetail = () => {
   const { id } = useParams<{ id: string }>();
   const project = getProjectById(id || "");
+  const { language } = useLanguage();
 
   if (!project) {
     return (
       <div className="min-h-screen animated-gradient flex items-center justify-center">
         <motion.div className="text-center glass-card p-12" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}>
-          <h1 className="text-2xl font-bold mb-4">Project Not Found</h1>
-          <p className="text-muted-foreground mb-6">The project you're looking for doesn't exist.</p>
-          <Link to="/projects" className="glass-button-primary">View All Projects</Link>
+          <h1 className="text-2xl font-bold mb-4">
+            {language === "ID" ? "Proyek Tidak Ditemukan" : "Project Not Found"}
+          </h1>
+          <p className="text-muted-foreground mb-6">
+            {language === "ID" ? "Proyek yang Anda cari tidak ada." : "The project you're looking for doesn't exist."}
+          </p>
+          <Link to="/projects" className="glass-button-primary">
+            {language === "ID" ? "Lihat Semua Proyek" : "View All Projects"}
+          </Link>
         </motion.div>
       </div>
     );
   }
 
+  // Get translated content
+  const category = language === "ID" ? project.categoryId : project.category;
+  const shortDescription = language === "ID" ? project.shortDescriptionId : project.shortDescription;
+  const description = language === "ID" ? project.descriptionId : project.description;
+  const features = language === "ID" ? project.featuresId : project.features;
+  const duration = language === "ID" ? project.durationId : project.duration;
+
   return (
     <>
       <Helmet>
         <title>{project.title} | Bagus Portfolio</title>
-        <meta name="description" content={project.shortDescription} />
+        <meta name="description" content={shortDescription} />
         <meta property="og:title" content={`${project.title} | Bagus Portfolio`} />
-        <meta property="og:description" content={project.shortDescription} />
+        <meta property="og:description" content={shortDescription} />
       </Helmet>
 
       <div className="min-h-screen animated-gradient">
@@ -40,7 +55,8 @@ const ProjectDetail = () => {
             {/* Back Button */}
             <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.4 }}>
               <Link to="/projects" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors mb-8">
-                <ArrowLeft className="w-4 h-4" />Back to Projects
+                <ArrowLeft className="w-4 h-4" />
+                {language === "ID" ? "Kembali ke Proyek" : "Back to Projects"}
               </Link>
             </motion.div>
 
@@ -61,7 +77,7 @@ const ProjectDetail = () => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.4 }}
                   >
-                    {project.category}
+                    {category}
                   </motion.span>
                   <motion.h1
                     className="text-3xl md:text-4xl font-bold text-foreground mb-2"
@@ -77,7 +93,7 @@ const ProjectDetail = () => {
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.6 }}
                   >
-                    {project.shortDescription}
+                    {shortDescription}
                   </motion.p>
                 </div>
               </div>
@@ -87,16 +103,19 @@ const ProjectDetail = () => {
               {/* Main Content */}
               <div className="lg:col-span-2 space-y-8">
                 <AnimatedSection className="glass-card p-6 md:p-8">
-                  <h2 className="text-xl font-bold mb-4">About This Project</h2>
-                  <p className="text-muted-foreground leading-relaxed">{project.description}</p>
+                  <h2 className="text-xl font-bold mb-4">
+                    {language === "ID" ? "Tentang Proyek Ini" : "About This Project"}
+                  </h2>
+                  <p className="text-muted-foreground leading-relaxed">{description}</p>
                 </AnimatedSection>
 
                 <AnimatedSection className="glass-card p-6 md:p-8">
                   <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
-                    <CheckCircle className="w-5 h-5 text-primary" />Key Features
+                    <CheckCircle className="w-5 h-5 text-primary" />
+                    {language === "ID" ? "Fitur Utama" : "Key Features"}
                   </h2>
                   <ul className="space-y-3">
-                    {project.features.map((feature, index) => (
+                    {features.map((feature, index) => (
                       <motion.li
                         key={index}
                         className="flex items-start gap-3"
@@ -119,42 +138,31 @@ const ProjectDetail = () => {
               {/* Sidebar */}
               <div className="space-y-6">
                 <AnimatedSection className="glass-card p-6">
-                  <h2 className="text-lg font-bold mb-4">Project Info</h2>
+                  <h2 className="text-lg font-bold mb-4">
+                    {language === "ID" ? "Info Proyek" : "Project Info"}
+                  </h2>
                   <div className="space-y-3 text-sm">
                     {project.company && (
                       <div>
-                        <span className="text-muted-foreground">Company</span>
+                        <span className="text-muted-foreground">
+                          {language === "ID" ? "Perusahaan" : "Company"}
+                        </span>
                         <p className="font-medium text-foreground">{project.company}</p>
                       </div>
                     )}
                     <div>
-                      <span className="text-muted-foreground">Role</span>
-                      <p className="font-medium text-foreground">{project.role}</p>
-                    </div>
-                    <div>
-                      <span className="text-muted-foreground">Year</span>
+                      <span className="text-muted-foreground">
+                        {language === "ID" ? "Tahun" : "Year"}
+                      </span>
                       <p className="font-medium text-foreground">{project.year}</p>
                     </div>
                   </div>
                 </AnimatedSection>
 
                 <AnimatedSection className="glass-card p-6">
-                  <h2 className="text-lg font-bold mb-4">Technologies Used</h2>
-                  <div className="flex flex-wrap gap-2">
-                    {project.technologies.map((tech) => (
-                      <motion.span
-                        key={tech}
-                        className="px-3 py-1.5 text-xs font-medium bg-primary/10 text-primary border border-primary/20 rounded-full"
-                        whileHover={{ scale: 1.1 }}
-                      >
-                        {tech}
-                      </motion.span>
-                    ))}
-                  </div>
-                </AnimatedSection>
-
-                <AnimatedSection className="glass-card p-6">
-                  <h2 className="text-lg font-bold mb-4">Project Links</h2>
+                  <h2 className="text-lg font-bold mb-4">
+                    {language === "ID" ? "Link Proyek" : "Project Links"}
+                  </h2>
                   <div className="space-y-3">
                     {project.links.length > 0 ? project.links.map((link, i) => (
                       <motion.a
@@ -169,7 +177,9 @@ const ProjectDetail = () => {
                         <ExternalLink className="w-4 h-4" />{link.label}
                       </motion.a>
                     )) : (
-                      <p className="text-sm text-muted-foreground text-center">Project links not available</p>
+                      <p className="text-sm text-muted-foreground text-center">
+                        {language === "ID" ? "Link proyek tidak tersedia" : "Project links not available"}
+                      </p>
                     )}
                   </div>
                 </AnimatedSection>

@@ -1,149 +1,189 @@
-import { User, Briefcase, Building2, MessageSquare, ShoppingBag, Moon, Sun } from "lucide-react";
 import { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { Sun, Moon } from "lucide-react";
 import { useTheme } from "next-themes";
-import ThemeToggle from "./ThemeToggle";
-import { footerConfig } from "@/data/personal";
-
-const navItems = [
-  { id: "profile", icon: User, label: "Profile" },
-  { id: "projects", icon: Briefcase, label: "Projects" },
-  { id: "products", icon: ShoppingBag, label: "Products" },
-  { id: "experience", icon: Building2, label: "Experience" },
-  { id: "testimonials", icon: MessageSquare, label: "Reviews" },
-];
-
-const mobileNavItems = navItems.filter((item) => item.id !== "products");
+import { useLanguage } from "@/context/LanguageContext";
+import { personalInfo } from "@/data/personal";
 
 const Navigation = () => {
-  const [activeSection, setActiveSection] = useState("profile");
-  const [isScrolled, setIsScrolled] = useState(false);
+  const location = useLocation();
+  const [scrolled, setScrolled] = useState(false);
+  const [activeSection, setActiveSection] = useState<string>("");
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const { language, setLanguage, t } = useLanguage();
 
+  const navLinks = [
+    { label: t.nav.home, href: "/" },
+    { label: t.experience.title, href: "#experience" },
+    { label: t.nav.works, href: "#works" },
+    { label: t.nav.services, href: "#services" },
+  ];
+
+  // Prevent hydration mismatch
   useEffect(() => {
     setMounted(true);
   }, []);
 
+  // Scroll spy - detect which section is in view
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
+    if (location.pathname !== "/") {
+      setActiveSection("");
+      return;
+    }
+
+    const sections = ["experience", "works", "services"];
+    
+    const onScroll = () => {
+      setScrolled(window.scrollY > 20);
       
-      const sections = navItems.map((item) => item.id);
-      for (const section of [...sections].reverse()) {
-        const element = document.getElementById(section);
-        if (element) {
-          const rect = element.getBoundingClientRect();
-          if (rect.top <= 200) {
-            setActiveSection(section);
+      // Find which section is currently in view
+      const scrollPos = window.scrollY + 150; // offset for navbar height
+      
+      let currentSection = "";
+      for (const sectionId of sections) {
+        const el = document.getElementById(sectionId);
+        if (el) {
+          const top = el.offsetTop;
+          const bottom = top + el.offsetHeight;
+          if (scrollPos >= top && scrollPos < bottom) {
+            currentSection = sectionId;
             break;
           }
         }
       }
+      
+      // If at the very top, consider it "home"
+      if (window.scrollY < 100) {
+        currentSection = "home";
+      }
+      
+      setActiveSection(currentSection);
     };
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll(); // Initial check
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [location.pathname]);
 
-  const scrollToSection = (id: string) => {
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    if (href.startsWith("#")) {
+      e.preventDefault();
+      const el = document.querySelector(href);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth" });
+      }
     }
   };
 
+  const isActive = (href: string) => {
+    // For non-home pages
+    if (location.pathname !== "/") {
+      if (href === "/") return false;
+      if (href.startsWith("#")) return false;
+      return location.pathname.startsWith(href);
+    }
+    
+    // For home page with sections
+    if (href === "/") {
+      return activeSection === "home" || activeSection === "";
+    }
+    if (href.startsWith("#")) {
+      const sectionId = href.replace("#", "");
+      return activeSection === sectionId;
+    }
+    return false;
+  };
+
+  const toggleTheme = () => {
+    setTheme(theme === "dark" ? "light" : "dark");
+  };
+
+  const toggleLanguage = () => {
+    setLanguage(language === "EN" ? "ID" : "EN");
+  };
+
   return (
-    <>
-      {/* Desktop Navigation - Top */}
-      <nav className={`glass-nav hidden md:block transition-all duration-500 ${isScrolled ? "shadow-lg" : ""}`}>
-        <div className="flex items-center justify-center gap-2">
-          {navItems.map((item) => (
-            <button
-              key={item.id}
-              onClick={() => scrollToSection(item.id)}
-              className={`flex items-center justify-center gap-2 px-4 py-2 rounded-xl transition-all duration-300 ${
-                activeSection === item.id
-                  ? "bg-primary text-primary-foreground shadow-md"
-                  : "hover:bg-secondary/50"
-              }`}
-            >
-              <item.icon className="w-4 h-4 shrink-0" />
-              {activeSection === item.id && (
-                <span className="text-sm font-medium animate-fade-in">{item.label}</span>
-              )}
-            </button>
+    <header className={`nav-bar ${scrolled ? "scrolled" : ""}`}>
+      <div className="site-wrap nav-inner">
+
+        {/* LEFT: Logo/Name */}
+        <Link 
+          to="/"
+          className="text-lg font-semibold text-foreground"
+          data-reveal="fade-up"
+        >
+          {personalInfo.name}
+        </Link>
+
+        {/* CENTER: Navigation Links */}
+        <nav 
+          aria-label="Main navigation" 
+          className="hidden md:flex items-center gap-8"
+        >
+          {navLinks.map((link, i) => (
+            link.href.startsWith("#") ? (
+              <a
+                key={link.href}
+                href={link.href}
+                onClick={(e) => handleNavClick(e, link.href)}
+                className={`nav-link ${isActive(link.href) ? "nav-link-active" : ""}`}
+                data-reveal="fade-up"
+                data-reveal-delay={String(0.05 + i * 0.03)}
+              >
+                {link.label}
+              </a>
+            ) : (
+              <Link
+                key={link.href}
+                to={link.href}
+                className={`nav-link ${isActive(link.href) ? "nav-link-active" : ""}`}
+                data-reveal="fade-up"
+                data-reveal-delay={String(0.05 + i * 0.03)}
+              >
+                {link.label}
+              </Link>
+            )
           ))}
+        </nav>
 
-          <div className="w-px h-6 bg-border/50 mx-2" />
+        {/* RIGHT: Theme Toggle + Language Switch */}
+        <div className="flex items-center gap-3">
+          {/* Dark/Light Mode Toggle */}
+          <button
+            onClick={toggleTheme}
+            className="nav-cta"
+            data-magnetic
+            data-magnetic-strength="0.15"
+            data-reveal="fade-up"
+            data-reveal-delay="0.2"
+            aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
+          >
+            {mounted && (
+              theme === "dark" ? (
+                <Sun className="w-4 h-4" aria-hidden="true" />
+              ) : (
+                <Moon className="w-4 h-4" aria-hidden="true" />
+              )
+            )}
+          </button>
 
-          <ThemeToggle />
-
-          <span className="text-sm text-primary ml-2 relative">
-            {footerConfig.availabilityStatus}
-            <svg 
-              className="absolute -bottom-2 left-0 w-full h-3"
-              viewBox="0 0 120 12" 
-              fill="none" 
-              preserveAspectRatio="none"
-            >
-              <path 
-                d="M0 6C8 2 16 10 24 6C32 2 40 10 48 6C56 2 64 10 72 6C80 2 88 10 96 6C104 2 112 10 120 6" 
-                stroke="currentColor" 
-                strokeWidth="2" 
-                strokeLinecap="round"
-                className="text-primary/60"
-              />
-            </svg>
-          </span>
+          {/* Language Switch */}
+          <button
+            onClick={toggleLanguage}
+            className="nav-cta"
+            data-magnetic
+            data-magnetic-strength="0.15"
+            data-reveal="fade-up"
+            data-reveal-delay="0.25"
+            aria-label={`Switch to ${language === "EN" ? "Indonesian" : "English"}`}
+          >
+            <span className="text-xs font-medium">{language}</span>
+          </button>
         </div>
-      </nav>
 
-      {/* Mobile Navigation - Bottom */}
-      <nav className="glass-bottom-nav md:hidden">
-        <div className="flex items-center justify-around w-full">
-          {mobileNavItems.map((item) => (
-            <button
-              key={item.id}
-              onClick={() => scrollToSection(item.id)}
-              className={`flex flex-col items-center gap-1 py-2 px-3 rounded-xl transition-all duration-300 ${
-                activeSection === item.id
-                  ? "text-primary"
-                  : "text-muted-foreground"
-              }`}
-            >
-              <div className={`p-2 rounded-full transition-all duration-300 ${
-                activeSection === item.id
-                  ? "bg-primary/20 scale-110"
-                  : "hover:bg-secondary/50"
-              }`}>
-                <item.icon className="w-5 h-5" />
-              </div>
-              <span className={`text-xs font-medium transition-all duration-300 ${
-                activeSection === item.id ? "opacity-100" : "opacity-70"
-              }`}>
-                {item.label}
-              </span>
-            </button>
-          ))}
-
-          {mounted && (
-            <button
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className="flex flex-col items-center gap-1 py-2 px-3 rounded-xl transition-all duration-300 text-muted-foreground"
-            >
-              <div className="p-2 rounded-full transition-all duration-300 hover:bg-secondary/50">
-                {theme === "dark" ? (
-                  <Sun className="w-5 h-5" />
-                ) : (
-                  <Moon className="w-5 h-5" />
-                )}
-              </div>
-              <span className="text-xs font-medium opacity-70">Theme</span>
-            </button>
-          )}
-        </div>
-      </nav>
-    </>
+      </div>
+    </header>
   );
 };
 

@@ -15,7 +15,7 @@ const PromoToast = () => {
   const isMobile = useIsMobile();
 
   const handleContact = () => {
-    window.location.href = "mailto:bagussubagja17@gmail.com";
+    window.location.href = "https://mail.google.com/mail/?view=cm&to=bagussubagja17@gmail.com";
   };
 
   useEffect(() => {

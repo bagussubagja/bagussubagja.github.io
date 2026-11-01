@@ -1,83 +1,93 @@
-import { useEffect, useRef, useState } from "react";
-import { Quote } from "lucide-react";
-import { motion } from "framer-motion";
-import { AnimatedSection } from "./animations/MotionWrapper";
+import { useState, useEffect } from "react";
 import { testimonials } from "@/data/testimonials";
+import { useLanguage } from "@/context/LanguageContext";
 
 const Testimonials = () => {
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const [isPaused, setIsPaused] = useState(false);
+  const { t, language } = useLanguage();
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isAnimating, setIsAnimating] = useState(false);
 
+  // Auto-rotate testimonials every 5 seconds
   useEffect(() => {
-    const scrollContainer = scrollRef.current;
-    if (!scrollContainer) return;
+    const interval = setInterval(() => {
+      setIsAnimating(true);
+      setTimeout(() => {
+        setCurrentIndex((prev) => (prev + 1) % testimonials.length);
+        setIsAnimating(false);
+      }, 300); // fade out duration
+    }, 5000);
 
-    let animationId: number;
-    let scrollPosition = 0;
-    const scrollSpeed = 0.5;
+    return () => clearInterval(interval);
+  }, []);
 
-    const animate = () => {
-      if (!isPaused && scrollContainer) {
-        scrollPosition += scrollSpeed;
-        if (scrollPosition >= scrollContainer.scrollWidth / 2) {
-          scrollPosition = 0;
-        }
-        scrollContainer.scrollLeft = scrollPosition;
-      }
-      animationId = requestAnimationFrame(animate);
-    };
-
-    animationId = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(animationId);
-  }, [isPaused]);
+  const current = testimonials[currentIndex];
+  const content = language === "ID" ? current.contentId : current.content;
+  const role = language === "ID" ? current.roleId : current.role;
 
   return (
-    <section id="testimonials" className="py-24">
-      <div className="container max-w-6xl mx-auto px-4 mb-12">
-        <AnimatedSection className="text-center">
-          <h2 className="text-3xl lg:text-4xl font-bold mb-4">
-            What <span className="text-primary">People Say</span>
-          </h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
-            What people say about working with me
-          </p>
-        </AnimatedSection>
-      </div>
-
-      <motion.div
-        ref={scrollRef}
-        className="overflow-hidden cursor-grab active:cursor-grabbing"
-        onMouseEnter={() => setIsPaused(true)}
-        onMouseLeave={() => setIsPaused(false)}
-        initial={{ opacity: 0, y: 40 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.7, delay: 0.2 }}
-      >
-        <div className="flex gap-6 px-4 py-4" style={{ width: "max-content" }}>
-          {[...testimonials, ...testimonials].map((testimonial, index) => (
-            <motion.article
-              key={`${testimonial.id}-${index}`}
-              className="glass-card p-6 w-80 flex-shrink-0 flex flex-col gap-4 transition-all duration-300 hover:scale-[1.02]"
-              whileHover={{ y: -4 }}
+    <section
+      id="testimonials"
+      className="section-gap border-t border-border"
+      aria-labelledby="testi-heading"
+    >
+      <div className="site-wrap">
+        <div className="max-w-4xl mx-auto text-center">
+          <blockquote className="relative">
+            {/* Quote mark decoration */}
+            <span 
+              className="absolute -top-8 left-1/2 -translate-x-1/2 text-6xl text-foreground/10 font-serif"
+              aria-hidden="true"
             >
-              <Quote className="w-8 h-8 text-primary/50" />
-              <p className="text-sm text-muted-foreground leading-relaxed flex-grow">
-                {testimonial.content}
+              "
+            </span>
+
+            {/* Quote text with fade animation */}
+            <div
+              className={`transition-all duration-300 ease-in-out ${
+                isAnimating ? "opacity-0 translate-y-2" : "opacity-100 translate-y-0"
+              }`}
+            >
+              <p className="testi-quote">
+                "{content}"
               </p>
-              <div className="flex items-center gap-3 pt-4 border-t border-border/30">
-                <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-bold text-sm">
-                  {testimonial.initials}
-                </div>
-                <div>
-                  <p className="font-semibold text-foreground text-sm">{testimonial.name}</p>
-                  <p className="text-xs text-primary">{testimonial.role}</p>
-                </div>
-              </div>
-            </motion.article>
-          ))}
+
+              {/* Attribution */}
+              <footer className="mt-10">
+                <cite className="not-italic">
+                  <p className="text-base font-semibold text-foreground mb-1">
+                    {current.name}
+                  </p>
+                  <p className="testi-attr">
+                    {role}
+                  </p>
+                </cite>
+              </footer>
+            </div>
+
+            {/* Dots indicator */}
+            <div className="flex justify-center gap-2 mt-8">
+              {testimonials.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => {
+                    setIsAnimating(true);
+                    setTimeout(() => {
+                      setCurrentIndex(index);
+                      setIsAnimating(false);
+                    }, 300);
+                  }}
+                  className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                    index === currentIndex 
+                      ? "bg-foreground w-6" 
+                      : "bg-foreground/20 hover:bg-foreground/40"
+                  }`}
+                  aria-label={`Go to testimonial ${index + 1}`}
+                />
+              ))}
+            </div>
+          </blockquote>
         </div>
-      </motion.div>
+      </div>
     </section>
   );
 };
